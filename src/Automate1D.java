@@ -1,3 +1,5 @@
+import Errors.InvalidArrayError;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -7,6 +9,9 @@ public class Automate1D {
         int array[] = new int[initialArray.length()];
         int i = 0;
         for(char c : initialArray.toCharArray()){
+            if(c != '0' && c!= '1'){
+                throw new InvalidArrayError();
+            }
             array[i] = Integer.parseInt(String.valueOf(c));
             i++;
         }
@@ -49,49 +54,55 @@ public class Automate1D {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Saisir le tableau initiale : ");
-        String initialArray = scanner.nextLine();
+        try{
+            System.out.println("Saisir le tableau initiale : ");
+            String initialArray = scanner.nextLine();
+            System.out.println("Saisir la règle : ");
+            int rule = scanner.nextInt();
 
-        System.out.println("Saisir la règle : ");
-        int rule = scanner.nextInt();
+            System.out.println("Saisir le nombre de génération à simuler : ");
+            int generationNb = scanner.nextInt();
 
-        System.out.println("Saisir le nombre de génération à simuler : ");
-        int generationNb = scanner.nextInt();
+            HashMap<String,Integer> myMap = initializeConfig(binaryFromInt(rule));
 
-        HashMap<String,Integer> myMap = initializeConfig(binaryFromInt(rule));
-
-        int array[] = generateAnArrayFromString(initialArray);
-        int newArray[] = array.clone();
-        int length = array.length;
-        for(int j = 0; j < length; j++){
-            System.out.print(newArray[j]);
-        }
-        System.out.println("");
-        for(int i =0 ; i < generationNb ; i++){
-
-            //System.out.println("");
-            array = newArray.clone();
-            for(int j = 0; j < length; j++){
-                int elem = array[j];
-                int before,after;
-                if(j==0){
-                    before = array[length - 1];
-                    after = array[j+1];
-                }else if(j==length - 1){
-                    before = array[j-1];
-                    after = array[0];
-                }else{
-                    before = array[j-1];
-                    after = array[j+1];
-                }
-                newArray[j] = getNewState(myMap,before+""+elem+""+after);
-            }
-            //System.out.println("after : ");
+            int array[] = generateAnArrayFromString(initialArray);
+            int newArray[] = array.clone();
+            int length = array.length;
             for(int j = 0; j < length; j++){
                 System.out.print(newArray[j]);
             }
             System.out.println("");
+            for(int i =0 ; i < generationNb ; i++){
+
+                //System.out.println("");
+                array = newArray.clone();
+                for(int j = 0; j < length; j++){
+                    int elem = array[j];
+                    int before,after;
+                    if(j==0){
+                        before = array[length - 1];
+                        after = array[j+1];
+                    }else if(j==length - 1){
+                        before = array[j-1];
+                        after = array[0];
+                    }else{
+                        before = array[j-1];
+                        after = array[j+1];
+                    }
+                    newArray[j] = getNewState(myMap,before+""+elem+""+after);
+                }
+                //System.out.println("after : ");
+                for(int j = 0; j < length; j++){
+                    System.out.print(newArray[j]);
+                }
+                System.out.println("");
+            }
+        }catch(Error InvalidArrayError){
+            System.out.println("Le tableau initial est invalide");
         }
+
+
+
 
     }
 }
